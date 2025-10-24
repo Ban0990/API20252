@@ -1,23 +1,29 @@
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '../config.js'; // Asegúrate de que la variable JWT_SECRET esté definida en tu archivo de configuración
+import { JWT_SECRET } from '../config.js';
 
-export const verifyToken = async (req, res, next) => {
-    const usuario = req.headers['authorization'];
-    const token = usuario && usuario.split(' ')[1];
-    
-    if (!token) {
-        return res.status(403).json({ 
-            message: "Token no proporcionado" 
-        });
-    }
-    
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'tu_secreto_super_seguro');
-        req.userId = decoded.id;
-        next();
-    } catch (error) {
-        return res.status(401).json({ 
-            message: "Token inválido o expirado" 
-        });
-    }
+// TOKEN ESTÁTICO ÚNICO VÁLIDO
+const TOKEN_ESTATICO = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwicm9sZSI6InN5c3RlbSIsImlhdCI6MTc2MTI4MTk0N30.y_ucHxaAL2MQ49szPpk3C5WYRO8I61VhgBXM40_m6_w';
+
+export const verifyToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(403).json({ message: 'Token no proporcionado' });
+  }
+
+  // ✅ Solo acepta el token exacto
+  if (token !== TOKEN_ESTATICO) {
+    return res.status(401).json({ message: 'Token inválido' });
+  }
+
+  // (Opcional) Si quieres extraer datos del payload:
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.userId = decoded.id;
+  } catch {
+    return res.status(401).json({ message: 'Token inválido' });
+  }
+
+  next();
 };
