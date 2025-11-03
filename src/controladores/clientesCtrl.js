@@ -37,7 +37,7 @@ async (req,res)=>{
     console.log(req.body);
     const [result]=await conmysql.query("insert into clientes(cli_identificacion, cli_nombre, cli_telefono, cli_correo, cli_direccion, cli_pais, cli_ciudad) values(?,?,?,?,?,?,?)",
         [cli_identificacion, cli_nombre, cli_telefono, cli_correo, cli_direccion, cli_pais, cli_ciudad]);
-       req.send({id:result.insertId,})
+       res.send({id:result.insertId,})
     } catch(error){
             return res.status(500).json({message: "Error al obtener los clientes",
                 error: error.message,})

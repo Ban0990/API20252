@@ -10,6 +10,6 @@ router.post('/usuarios', postUsuario)//insert
 router.put('/usuarios/:id',putUsuario) //update
 router.patch('/usuarios/:id', patchUsuario)
 router.delete('/usuarios/:id', deleteUsuario)
-router.post('/login', login)
+router.post('/usuarios/login', login);
 
 export default router
