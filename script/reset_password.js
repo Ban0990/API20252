@@ -1,12 +1,25 @@
 import dotenv from 'dotenv';
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcryptjs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config({ path: '../.env' }); // ✅ Cargar variables de entorno
+// ✅ Resolver ruta absoluta al .env
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.join(__dirname, '..', '.env') }); // Carga segura del .env
 
 async function resetPassword() {
   try {
-    // Conectar a la base de datos usando los datos del .env
+    console.log('🔍 Conectando a la base de datos con las siguientes credenciales:');
+    console.log({
+      BD_HOST: process.env.BD_HOST,
+      BD_USER: process.env.BD_USER,
+      BD_DATABASE: process.env.BD_DATABASE,
+      BD_PORT: process.env.BD_PORT,
+    });
+
+    // 🧩 Conexión MySQL
     const connection = await mysql.createConnection({
       host: process.env.BD_HOST,
       user: process.env.BD_USER,
@@ -15,14 +28,14 @@ async function resetPassword() {
       port: process.env.BD_PORT,
     });
 
-    // Contraseña nueva (puedes cambiarla si deseas)
+    // 🆕 Nueva contraseña (puedes cambiarla aquí)
     const nuevaClave = '09902767';
 
-    // Generar hash de la nueva clave
+    // 🔐 Generar hash de la nueva clave
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(nuevaClave, salt);
 
-    // Actualizar el usuario 'jhalmarM'
+    // 🔄 Actualizar usuario específico
     const [result] = await connection.query(
       'UPDATE usuarios SET usr_clave = ? WHERE usr_usuario = ?',
       [hash, 'jhalmarM']
