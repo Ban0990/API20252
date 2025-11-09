@@ -29,7 +29,7 @@ async function resetPassword() {
     });
 
     // 🆕 Nueva contraseña (puedes cambiarla aquí)
-    const nuevaClave = '09902767';
+    const nuevaClave = 'justin2025';
 
     // 🔐 Generar hash de la nueva clave
     const salt = await bcrypt.genSalt(10);
@@ -38,7 +38,7 @@ async function resetPassword() {
     // 🔄 Actualizar usuario específico
     const [result] = await connection.query(
       'UPDATE usuarios SET usr_clave = ? WHERE usr_usuario = ?',
-      [hash, 'jhalmarM']
+      [hash, 'justinC']
     );
 
     if (result.affectedRows > 0) {

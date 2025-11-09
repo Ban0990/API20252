@@ -13,30 +13,36 @@ import pedidosRoutes from './routes/pedidos.routes.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Configuración CORS
-const corsOptions = {
-  origin: [
-    '*', // permite todos los orígenes — en producción usa tu dominio
-    'http://localhost:8100', // Ionic local
-    'http://localhost:4200', // Angular local
-    'https://api20252-d1jx.onrender.com', // dominio HTTPS de producción
-  ],
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-};
-
 const app = express();
 
-// 🧩 Middlewares base
-app.use(cors(corsOptions));
+// ✅ Middleware CORS — acepta cualquier origen, método y cabecera
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*'); // Permite todos los orígenes
+  res.header(
+    'Access-Control-Allow-Methods',
+    'GET,POST,PUT,PATCH,DELETE,OPTIONS'
+  );
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Authorization, X-Requested-With, Origin, Accept'
+  );
+
+  // Manejar preflight requests (OPTIONS)
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+// Middlewares base
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 🖼️ Servir archivos estáticos (imágenes subidas)
+// Servir archivos estáticos
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// 🚀 Ruta raíz para verificar el estado del servidor
+// Ruta raíz de verificación
 app.get('/', (req, res) => {
   res.json({
     status: '✅ API activa y funcionando correctamente',
@@ -46,13 +52,13 @@ app.get('/', (req, res) => {
   });
 });
 
-// 🧭 Rutas principales
+// Rutas principales
 app.use('/api', clientesRoutes);
 app.use('/api', productosRoutes);
 app.use('/api', usuariosRoutes);
 app.use('/api', pedidosRoutes);
 
-// ❌ Middleware para rutas no encontradas
+// Ruta no encontrada
 app.use((req, res) => {
   res.status(404).json({
     message: '❌ Endpoint no encontrado',
