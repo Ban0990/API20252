@@ -8,6 +8,7 @@ import clientesRoutes from './routes/clientes.routes.js';
 import productosRoutes from './routes/productos.routes.js';
 import usuariosRoutes from './routes/usuarios.routes.js';
 import pedidosRoutes from './routes/pedidos.routes.js';
+import categoriaRoutes from "./routes/categoria.routes.js";
 
 // Definir directorio base
 const __filename = fileURLToPath(import.meta.url);
@@ -57,6 +58,7 @@ app.use('/api', clientesRoutes);
 app.use('/api', productosRoutes);
 app.use('/api', usuariosRoutes);
 app.use('/api', pedidosRoutes);
+app.use("/api", categoriaRoutes);
 
 // Ruta no encontrada
 app.use((req, res) => {
